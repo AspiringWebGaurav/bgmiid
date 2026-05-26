@@ -286,103 +286,105 @@ const KEYWORDS = [
   "BGMI clan tag",
   "BGMI name generator online",
   "online BGMI name generator",
-].join(", ");
+];
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#7c3aed",
+};
+
+export const metadata = {
+  metadataBase: new URL(BASE_URL),
+  title: "BGMI Fancy Name Generator – Stylish BGMI Name & ID Stylist 2026",
+  description: "Generate fancy & stylish BGMI names instantly! 7 Unicode fonts, 29+ symbols, combo styles — all within BGMI's 14-char limit. Free, no login. Best BGMI name generator 2026.",
+  keywords: KEYWORDS,
+  authors: [{ name: "BGMI Name Stylist" }],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: BASE_URL,
+    languages: {
+      "en-IN": BASE_URL,
+      "en": BASE_URL,
+      "x-default": BASE_URL,
+    },
+  },
+  openGraph: {
+    type: "website",
+    siteName: "BGMI Name Stylist",
+    title: "BGMI Fancy Name Generator – Stylish BGMI Name & ID Stylist",
+    description: "Generate fancy, stylish BGMI names with Unicode fonts & symbols. Instant copy-paste. 100% free, no login. Best BGMI name generator online.",
+    url: BASE_URL,
+    images: [
+      {
+        url: `${BASE_URL}/og-image.png`,
+        secureUrl: `${BASE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "BGMI Fancy Name Stylist – Free ID Generator",
+        type: "image/png",
+      },
+      {
+        url: `${BASE_URL}/icon-512.png`,
+        secureUrl: `${BASE_URL}/icon-512.png`,
+        width: 512,
+        height: 512,
+        alt: "BGMI Fancy Name Stylist Logo",
+        type: "image/png",
+      }
+    ],
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BGMI Fancy Name Generator – Free Stylish BGMI Names",
+    description: "Generate stylish BGMI names with Unicode fonts & special symbols. Copy-paste ready. Free & instant.",
+    site: "@bgmistylist", // Placeholder, Next.js will generate the twitter:site tag
+    creator: "@bgmistylist", // Placeholder, Next.js will generate the twitter:creator tag
+    images: {
+      url: `${BASE_URL}/og-image.png`,
+      alt: "BGMI Name Stylist",
+    },
+  },
+  appleWebApp: {
+    title: "BGMI Stylist",
+    statusBarStyle: "black-translucent",
+    capable: true,
+  },
+  applicationName: "BGMI Name Stylist",
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    rating: "general",
+    "revisit-after": "3 days",
+    language: "English",
+    category: "Gaming, Tools, Utilities",
+    classification: "Gaming Tool",
+    coverage: "Worldwide",
+    distribution: "Global",
+    target: "all",
+    HandheldFriendly: "True",
+    MobileOptimized: "320",
+  },
+};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" dir="ltr" className="scroll-smooth">
       <head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover"
-        />
-
-        {/* ── Primary SEO ── */}
-        <title>
-          BGMI Fancy Name Generator – Stylish BGMI Name & ID Stylist 2026
-        </title>
-        <meta
-          name="description"
-          content="Generate fancy & stylish BGMI names instantly! 7 Unicode fonts, 29+ symbols, combo styles — all within BGMI's 14-char limit. Free, no login. Best BGMI name generator 2026."
-        />
-        <meta name="keywords" content={KEYWORDS} />
-        <meta name="author" content="BGMI Name Stylist" />
-        <meta
-          name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-        />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="bingbot" content="index, follow" />
-        <link rel="canonical" href={BASE_URL} />
-
-        {/* ── Language & Region ── */}
-        <meta httpEquiv="content-language" content="en-IN" />
-        <link rel="alternate" hrefLang="en-in" href={BASE_URL} />
-        <link rel="alternate" hrefLang="en" href={BASE_URL} />
-        <link rel="alternate" hrefLang="x-default" href={BASE_URL} />
-
-        {/* ── Open Graph (Facebook, WhatsApp, Telegram, Discord) ── */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="BGMI Name Stylist" />
-        <meta
-          property="og:title"
-          content="BGMI Fancy Name Generator – Stylish BGMI Name & ID Stylist"
-        />
-        <meta
-          property="og:description"
-          content="Generate fancy, stylish BGMI names with Unicode fonts & symbols. Instant copy-paste. 100% free, no login. Best BGMI name generator online."
-        />
-        <meta property="og:url" content={BASE_URL} />
-        <meta property="og:image" content={`${BASE_URL}/og-image.png`} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta
-          property="og:image:alt"
-          content="BGMI Fancy Name Stylist – Free ID Generator"
-        />
-        <meta property="og:locale" content="en_IN" />
-
-        {/* ── Twitter / X Card ── */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="BGMI Fancy Name Generator – Free Stylish BGMI Names"
-        />
-        <meta
-          name="twitter:description"
-          content="Generate stylish BGMI names with Unicode fonts & special symbols. Copy-paste ready. Free & instant."
-        />
-        <meta name="twitter:image" content={`${BASE_URL}/og-image.png`} />
-        <meta name="twitter:image:alt" content="BGMI Name Stylist" />
-
-        {/* ── PWA & Mobile App ── */}
-        <meta name="theme-color" content="#7c3aed" />
-        <meta name="application-name" content="BGMI Name Stylist" />
-        <meta name="apple-mobile-web-app-title" content="BGMI Stylist" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="format-detection" content="telephone=no" />
-
-        {/* ── Extra discovery tags ── */}
-        <meta name="rating" content="general" />
-        <meta name="revisit-after" content="3 days" />
-        <meta name="language" content="English" />
-        <meta name="category" content="Gaming, Tools, Utilities" />
-        <meta name="classification" content="Gaming Tool" />
-        <meta name="coverage" content="Worldwide" />
-        <meta name="distribution" content="Global" />
-        <meta name="target" content="all" />
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-
-        {/* ── Sitemap reference ── */}
-        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-
         {/* ── Font preconnect (perf) ── */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
