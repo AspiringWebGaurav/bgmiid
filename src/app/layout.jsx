@@ -1,5 +1,6 @@
 import React from "react";
 import { Providers } from "./providers";
+import PageTransition from "../components/PageTransition";
 import "./global.css";
 
 const BASE_URL =
@@ -416,9 +417,12 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
         />
       </head>
-      <body className="overflow-x-hidden antialiased">
-        <Providers>{children}</Providers>
+      <body className="overflow-x-hidden antialiased flex flex-col min-h-screen">
+        <Providers>
+          <PageTransition>{children}</PageTransition>
+        </Providers>
       </body>
     </html>
   );
 }
+

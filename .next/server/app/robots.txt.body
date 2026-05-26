@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Allow: /guidelines
+Allow: /terms
+Disallow: /api/auth/
+Disallow: /api/utils/
+
+Sitemap: https://bgmiid.eu.cc/sitemap.xml

@@ -121,10 +121,10 @@ function ThemeToggle({ p }) {
 function CardSkeleton({ p }) {
   return (
     <div
-      className="rounded-xl p-5 border"
+      className="rounded-xl p-5 border skeleton-premium"
       style={{ background: p.bgCard, borderColor: p.border }}
     >
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-3 relative z-10">
         <div
           className="h-5 w-14 rounded-full"
           style={{ background: p.border }}
@@ -135,16 +135,10 @@ function CardSkeleton({ p }) {
         />
       </div>
       <div
-        className="h-6 w-3/4 rounded-lg mb-5"
+        className="h-6 w-3/4 rounded-lg mb-5 relative z-10"
         style={{ background: p.border }}
       />
-      <div className="h-9 w-full rounded-lg" style={{ background: p.border }} />
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% { opacity: 0.4; } 50% { opacity: 0.9; } 100% { opacity: 0.4; }
-        }
-        .skeleton-pulse > * { animation: shimmer 1.4s ease-in-out infinite; }
-      `}</style>
+      <div className="h-9 w-full rounded-lg relative z-10" style={{ background: p.border }} />
     </div>
   );
 }
@@ -221,6 +215,8 @@ export default function BGMIDGenerator() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [copiedId, setCopiedId] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const debounceRef = useRef(null);
 
   // Silent visitor tracking — fires once when app is ready
@@ -231,6 +227,11 @@ export default function BGMIDGenerator() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ page: "/" }),
     }).catch(() => {});
+
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    return () => window.removeEventListener("scroll", onScroll);
   }, [appReady]);
 
   // Debounce input → only fires API after 400ms pause
@@ -275,12 +276,12 @@ export default function BGMIDGenerator() {
 
       {/* ── NAVBAR ── */}
       <nav
-        className="w-full sticky top-0 z-50 border-b transition-colors duration-300"
+        className="w-full sticky top-0 z-50 border-b transition-all duration-300"
         style={{
-          background: p.bgNav,
-          borderColor: p.border,
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: scrolled ? p.bgNav : "transparent",
+          borderColor: scrolled ? p.border : "transparent",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
         }}
       >
         <div className="w-full px-6 h-16 flex items-center justify-between">
@@ -392,24 +393,25 @@ export default function BGMIDGenerator() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="text-4xl md:text-6xl font-black tracking-tight mb-4 leading-tight"
             style={{ color: p.text }}
           >
             Create a{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg,#a78bfa,#818cf8,#60a5fa)",
-              }}
-            >
+            <span className="text-gradient-animated bg-clip-text text-transparent">
               Legendary
             </span>
             <br />
-            BGMI Identity
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+              className="inline-block"
+            >
+              BGMI Identity
+            </motion.span>
           </motion.h1>
 
           <motion.p
@@ -482,11 +484,10 @@ export default function BGMIDGenerator() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="max-w-2xl mx-auto mb-4 rounded-2xl p-[1.5px] shadow-xl transition-all duration-300 focus-within:scale-[1.01] focus-within:shadow-[0_15px_50px_-10px_rgba(124,58,237,0.5)]"
+              className="max-w-2xl mx-auto mb-4 rounded-2xl p-[1.5px] shadow-xl animated-focus-ring transition-all duration-300"
               style={{
                 background:
                   "linear-gradient(135deg,rgba(124,58,237,0.6),rgba(79,70,229,0.5),rgba(6,182,212,0.3))",
-                boxShadow: "0 10px 40px -10px rgba(124,58,237,0.3)",
               }}
             >
             <div
@@ -634,49 +635,48 @@ export default function BGMIDGenerator() {
               <motion.div
                 id="results-grid"
                 layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.05 }
+                  }
+                }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
                 {results.map((item, index) => {
                   const meta = TYPE_META[item.type] || TYPE_META.font;
-                  const isHov = hoveredCard === index;
                   const isCopied = copiedId === item.name;
                   const tooLong = item.tooLong;
                   return (
                     <motion.div
                       layout
                       key={item.id || index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: Math.min(index * 0.025, 0.4) }}
-                      onMouseEnter={() => setHoveredCard(index)}
-                      onMouseLeave={() => setHoveredCard(null)}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+                      }}
+                      whileHover={!isTouch && !tooLong ? { y: -6, scale: 1.02, transition: { duration: 0.2 } } : {}}
                       className={twMerge(
-                        "relative rounded-xl p-5 overflow-hidden cursor-default border transition-all duration-300",
-                        !tooLong && isHov && "animate-shine-effect"
+                        "relative rounded-xl p-5 overflow-hidden cursor-default border transition-all duration-300 group",
                       )}
                       style={{
-                        background: isHov ? p.bgCardHover : p.bgCard,
+                        background: p.bgCard,
                         borderColor: tooLong
                           ? "rgba(239,68,68,0.2)"
-                          : isHov
-                            ? "rgba(124,58,237,0.4)"
-                            : p.border,
-                        boxShadow:
-                          isHov && !tooLong
-                            ? "0 8px 32px rgba(124,58,237,0.12)"
-                            : "none",
-                        transform: isHov ? "translateY(-3px)" : "translateY(0)",
+                          : p.border,
                         opacity: tooLong ? 0.55 : 1,
                       }}
                     >
-                      {isHov && !tooLong && (
+                      {!tooLong && !isTouch && (
                         <div
-                          className="absolute inset-0 pointer-events-none rounded-xl"
+                          className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                           style={{
                             background:
-                              "radial-gradient(circle at 50% 0%,rgba(124,58,237,0.06),transparent 70%)",
+                              "radial-gradient(circle at 50% 0%,rgba(124,58,237,0.1),transparent 70%)",
+                            boxShadow: "inset 0 0 0 1px rgba(124,58,237,0.3), 0 8px 32px rgba(124,58,237,0.15)"
                           }}
                         />
                       )}
@@ -726,11 +726,12 @@ export default function BGMIDGenerator() {
 
                       <motion.button
                         whileTap={!tooLong ? { scale: 0.95 } : {}}
+                        whileHover={!tooLong && !isTouch ? { scale: 1.03 } : {}}
                         onClick={() => handleCopy(item.name)}
                         disabled={tooLong}
                         className={twMerge(
-                          "w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold border transition-all duration-200 disabled:cursor-not-allowed",
-                          !tooLong && !isCopied && "animate-shine-effect hover:shadow-md"
+                          "w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold border transition-all duration-300 disabled:cursor-not-allowed",
+                          !tooLong && !isCopied && "group-hover:bg-violet-500/10 group-hover:text-violet-500 group-hover:border-violet-500/30 group-hover:shadow-md animate-shine-effect"
                         )}
                         style={
                           isCopied
@@ -746,15 +747,11 @@ export default function BGMIDGenerator() {
                                   borderColor: p.border,
                                 }
                               : {
-                                  background: isHov
-                                    ? "rgba(124,58,237,0.09)"
-                                    : "transparent",
+                                  background: "transparent",
                                   color: p.isDark
                                     ? "rgba(255,255,255,0.65)"
                                     : "#6d28d9",
-                                  borderColor: isHov
-                                    ? "rgba(124,58,237,0.35)"
-                                    : p.border,
+                                  borderColor: p.border,
                                 }
                         }
                       >
@@ -811,7 +808,13 @@ export default function BGMIDGenerator() {
         </section>
 
         {/* ── GUIDELINES PREVIEW ── */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
+        >
           <div
             className="md:col-span-2 rounded-2xl border p-8 transition-colors duration-300"
             style={{ background: p.bgCard, borderColor: p.border }}
@@ -939,12 +942,16 @@ export default function BGMIDGenerator() {
               Full naming guide <ChevronRight size={14} />
             </a>
           </div>
-        </section>
+        </motion.section>
 
         {/* ── SYMBOL LIBRARY ── */}
-        <section
+        <motion.section
           id="symbols"
           aria-label="BGMI Symbol Library"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="rounded-2xl border p-8 mb-16 transition-colors duration-300"
           style={{ background: p.bgCard, borderColor: p.border }}
         >
@@ -972,8 +979,8 @@ export default function BGMIDGenerator() {
             {BGMI_SYMBOLS.map((sym, i) => (
               <motion.button
                 key={i}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.85 }}
+                whileHover={!isTouch ? { scale: 1.15 } : {}}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   navigator.clipboard.writeText(sym);
                   toast.success(`"${sym}" copied!`);
@@ -989,12 +996,16 @@ export default function BGMIDGenerator() {
               </motion.button>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* ── FAQ SECTION (SEO rich results) ── */}
-        <section
+        <motion.section
           id="faq"
           aria-label="BGMI Fancy Name FAQ"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="mb-16"
           itemScope
           itemType="https://schema.org/FAQPage"
@@ -1005,12 +1016,7 @@ export default function BGMIDGenerator() {
               style={{ color: p.text }}
             >
               Frequently Asked{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: "linear-gradient(135deg,#a78bfa,#60a5fa)",
-                }}
-              >
+              <span className="text-gradient-animated bg-clip-text text-transparent">
                 Questions
               </span>
             </h2>
@@ -1056,7 +1062,7 @@ export default function BGMIDGenerator() {
               <FaqCard key={i} q={item.q} a={item.a} p={p} />
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* ── HIDDEN SEO KEYWORD BLOCK (screen-reader accessible, not spammy) ── */}
         <div className="sr-only" aria-hidden="true">

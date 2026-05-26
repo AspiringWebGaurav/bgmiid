@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/api/admin/stats/route": "/api/admin/stats",
+  "/api/generate/route": "/api/generate",
+  "/api/track/route": "/api/track",
+  "/apple-icon.png/route": "/apple-icon.png",
+  "/guidelines/page": "/guidelines",
+  "/icon.png/route": "/icon.png",
+  "/manifest.webmanifest/route": "/manifest.webmanifest",
+  "/page": "/",
+  "/robots.txt/route": "/robots.txt",
+  "/sitemap.xml/route": "/sitemap.xml",
+  "/terms/page": "/terms"
+}
