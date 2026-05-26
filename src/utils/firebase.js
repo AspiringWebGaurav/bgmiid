@@ -4,13 +4,13 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAhJNxRhCVCtSRe3ldo1WwxTOd-S--i5eA",
-  authDomain: "bgmiidservices.firebaseapp.com",
-  projectId: "bgmiidservices",
-  storageBucket: "bgmiidservices.firebasestorage.app",
-  messagingSenderId: "114325698624",
-  appId: "1:114325698624:web:5a71d00768e9bc411587a5",
-  measurementId: "G-PD8V4CMRBX"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase (singleton pattern to avoid re-initializing in SSR/HMR)
