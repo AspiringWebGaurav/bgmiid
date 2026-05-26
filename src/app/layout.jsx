@@ -1,17 +1,6 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "../utils/ThemeContext";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 30,
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import { Providers } from "./providers";
+import "./global.css";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_CREATE_APP_URL || "https://bgmiid.eu.cc";
@@ -426,9 +415,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="overflow-x-hidden antialiased">
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </QueryClientProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

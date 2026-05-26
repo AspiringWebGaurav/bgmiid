@@ -7,3 +7,31 @@
     @apply outline-none focus:outline-none;
   }
 }
+
+@layer utilities {
+  .glass-card {
+    @apply backdrop-blur-md bg-white/5 border border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  }
+  .glass-card-dark {
+    @apply backdrop-blur-md bg-black/20 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+  .animate-shine-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  .animate-shine-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-15deg);
+    transition: all 0.5s;
+  }
+  .animate-shine-effect:hover::before {
+    left: 200%;
+    transition: all 0.7s;
+  }
+}

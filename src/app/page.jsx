@@ -156,7 +156,7 @@ function FaqCard({ q, a, p }) {
     <article
       itemScope
       itemType="https://schema.org/Question"
-      className="rounded-xl border transition-all duration-200 overflow-hidden"
+      className="rounded-xl border transition-all duration-300 overflow-hidden hover:-translate-y-0.5 hover:shadow-lg"
       style={{
         background: p.bgCard,
         borderColor: open ? "rgba(124,58,237,0.35)" : p.border,
@@ -458,15 +458,18 @@ export default function BGMIDGenerator() {
                 bc: "rgba(99,102,241,0.22)",
                 tc: "#818cf8",
               },
-            ].map((s) => (
-              <div
+            ].map((s, i) => (
+              <motion.div
                 key={s.label}
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" }}
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border cursor-default"
                 style={{ background: s.bg, borderColor: s.bc, color: s.tc }}
               >
                 {s.icon}
                 {s.label}
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
@@ -479,7 +482,7 @@ export default function BGMIDGenerator() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="max-w-2xl mx-auto mb-4 rounded-2xl p-[1.5px] shadow-xl transition-all duration-300"
+              className="max-w-2xl mx-auto mb-4 rounded-2xl p-[1.5px] shadow-xl transition-all duration-300 focus-within:scale-[1.01] focus-within:shadow-[0_15px_50px_-10px_rgba(124,58,237,0.5)]"
               style={{
                 background:
                   "linear-gradient(135deg,rgba(124,58,237,0.6),rgba(79,70,229,0.5),rgba(6,182,212,0.3))",
@@ -562,27 +565,34 @@ export default function BGMIDGenerator() {
           </div>
 
           {/* Category tabs */}
-          <div className="flex items-center justify-center gap-2 mb-10 overflow-x-auto pb-2">
+          <div className="flex items-center justify-center gap-2 mb-10 overflow-x-auto pb-2 px-2">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className="px-5 py-2 text-sm font-semibold rounded-full whitespace-nowrap border transition-all duration-200"
-                style={
-                  activeCategory === cat.id
-                    ? {
-                        background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
-                        color: "#fff",
-                        borderColor: "transparent",
-                      }
-                    : {
-                        background: "transparent",
-                        color: p.textMuted,
-                        borderColor: p.border,
-                      }
-                }
+                className="relative px-5 py-2 text-sm font-semibold rounded-full whitespace-nowrap transition-colors duration-200 outline-none"
+                style={{
+                  color: activeCategory === cat.id ? "#fff" : p.textMuted,
+                }}
               >
-                {cat.label}
+                {activeCategory === cat.id && (
+                  <motion.div
+                    layoutId="activeCategory"
+                    className="absolute inset-0 rounded-full shadow-md"
+                    style={{
+                      background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
+                      zIndex: -1,
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {activeCategory !== cat.id && (
+                  <div
+                    className="absolute inset-0 rounded-full border transition-opacity opacity-50 hover:opacity-100"
+                    style={{ borderColor: p.border, zIndex: -1 }}
+                  />
+                )}
+                <span className="relative z-10">{cat.label}</span>
               </button>
             ))}
           </div>
@@ -642,7 +652,10 @@ export default function BGMIDGenerator() {
                       transition={{ delay: Math.min(index * 0.025, 0.4) }}
                       onMouseEnter={() => setHoveredCard(index)}
                       onMouseLeave={() => setHoveredCard(null)}
-                      className="relative rounded-xl p-5 overflow-hidden cursor-default border transition-all duration-300"
+                      className={twMerge(
+                        "relative rounded-xl p-5 overflow-hidden cursor-default border transition-all duration-300",
+                        !tooLong && isHov && "animate-shine-effect"
+                      )}
                       style={{
                         background: isHov ? p.bgCardHover : p.bgCard,
                         borderColor: tooLong
@@ -711,10 +724,14 @@ export default function BGMIDGenerator() {
                       )}
                       {!tooLong && <div className="mb-3" />}
 
-                      <button
+                      <motion.button
+                        whileTap={!tooLong ? { scale: 0.95 } : {}}
                         onClick={() => handleCopy(item.name)}
                         disabled={tooLong}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold border transition-all duration-200 disabled:cursor-not-allowed"
+                        className={twMerge(
+                          "w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold border transition-all duration-200 disabled:cursor-not-allowed",
+                          !tooLong && !isCopied && "animate-shine-effect hover:shadow-md"
+                        )}
                         style={
                           isCopied
                             ? {
@@ -752,7 +769,7 @@ export default function BGMIDGenerator() {
                             <span>{tooLong ? "Too Long" : "Copy ID"}</span>
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </motion.div>
                   );
                 })}
@@ -767,12 +784,14 @@ export default function BGMIDGenerator() {
                 className="text-center py-24 rounded-3xl border-2 border-dashed"
                 style={{ borderColor: p.emptyBorder, background: p.emptyBg }}
               >
-                <div
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                   style={{ background: p.bgTag, color: p.textMuted }}
                 >
                   <User size={28} />
-                </div>
+                </motion.div>
                 <h3
                   className="text-lg font-bold mb-2"
                   style={{ color: p.textSub }}
@@ -1057,33 +1076,39 @@ export default function BGMIDGenerator() {
         className="border-t w-full transition-colors duration-300"
         style={{ background: p.bgFooter, borderColor: p.border }}
       >
-        <div className="w-full px-6 py-10">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-            <div className="max-w-xs">
-              <div className="flex items-center gap-2 mb-2">
+        <div className="w-full px-6 py-12 md:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
+            {/* Brand Column */}
+            <div className="md:col-span-6 lg:col-span-5 flex flex-col gap-4">
+              <div className="flex items-center gap-2">
                 <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center font-black italic text-[11px] text-white"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center font-black italic text-xs text-white shadow-lg"
                   style={{
                     background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
                   }}
                 >
                   ID
                 </div>
-                <span className="font-black text-sm" style={{ color: p.text }}>
+                <span className="font-black text-lg tracking-tight" style={{ color: p.text }}>
                   BGMI Name Stylist
                 </span>
               </div>
               <p
-                className="text-xs leading-relaxed"
+                className="text-sm leading-relaxed max-w-sm"
                 style={{ color: p.textMuted }}
               >
                 A free community tool for generating stylised player IDs. Not
-                affiliated with or endorsed by Krafton Inc.
+                affiliated with or endorsed by Krafton Inc. Built with care for the community.
               </p>
             </div>
-            <div className="flex flex-col gap-1.5">
+            
+            {/* Spacer for large screens */}
+            <div className="hidden lg:block lg:col-span-1"></div>
+
+            {/* Navigation Column */}
+            <div className="md:col-span-3 flex flex-col gap-3">
               <p
-                className="text-[10px] font-bold uppercase tracking-widest mb-1"
+                className="text-[11px] font-bold uppercase tracking-widest mb-2"
                 style={{ color: p.tagText }}
               >
                 Navigate
@@ -1100,16 +1125,18 @@ export default function BGMIDGenerator() {
                   {...(l.ext
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="text-sm transition-colors duration-200 hover:text-violet-500"
+                  className="text-sm font-medium transition-all duration-200 hover:text-violet-500 hover:translate-x-1 w-fit"
                   style={{ color: p.textMuted }}
                 >
                   {l.label}
                 </a>
               ))}
             </div>
-            <div className="flex flex-col gap-1.5">
+
+            {/* Legal Column */}
+            <div className="md:col-span-3 flex flex-col gap-3">
               <p
-                className="text-[10px] font-bold uppercase tracking-widest mb-1"
+                className="text-[11px] font-bold uppercase tracking-widest mb-2"
                 style={{ color: p.tagText }}
               >
                 Legal
@@ -1124,7 +1151,7 @@ export default function BGMIDGenerator() {
                   href={l.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm transition-colors duration-200 hover:text-violet-500"
+                  className="text-sm font-medium transition-all duration-200 hover:text-violet-500 hover:translate-x-1 w-fit"
                   style={{ color: p.textMuted }}
                 >
                   {l.label}
@@ -1134,15 +1161,14 @@ export default function BGMIDGenerator() {
           </div>
 
           <div
-            className="mt-8 pt-6 border-t flex flex-col md:flex-row justify-between items-center gap-3"
+            className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4"
             style={{ borderColor: p.divider }}
           >
-            <p className="text-xs" style={{ color: p.tagText }}>
-              © 2026 BGMI Name Stylist. Built for the community. All trademarks
-              belong to their respective owners.
+            <p className="text-xs font-medium text-center md:text-left" style={{ color: p.tagText }}>
+              © 2026 BGMI Name Stylist. All trademarks belong to their respective owners.
             </p>
-            <div className="flex items-center gap-1.5">
-              <span className="relative flex h-1.5 w-1.5">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5">
+              <span className="relative flex h-2 w-2">
                 <span
                   className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
                   style={{
@@ -1150,11 +1176,11 @@ export default function BGMIDGenerator() {
                       "bgmi-ping 1.5s cubic-bezier(0,0,0.2,1) infinite",
                   }}
                 />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
               <span
                 className="text-[10px] font-bold uppercase tracking-wider"
-                style={{ color: p.tagText }}
+                style={{ color: p.text }}
               >
                 All systems operational
               </span>
