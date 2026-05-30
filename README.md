@@ -2,7 +2,7 @@
 
 A production-ready, SEO-optimized web application to generate fancy, stylish BGMI player names using Unicode fonts, special symbols, and combo styles. Works flawlessly within BGMI's 14-character limit.
 
-![Screenshot](/og-image.png) *(Placeholder for screenshot)*
+![Screenshot](./public/og-image.png) *(Preview of the app)*
 
 ## Features
 
