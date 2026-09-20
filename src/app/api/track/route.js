@@ -54,38 +54,24 @@ export async function POST(request) {
       return Response.json({ ok: true, skipped: true });
     }
 
-    // Geo lookup via ip-api.com (free, no key needed, 45 req/min)
-    let geo = {};
-    if (
-      ip !== "unknown" &&
-      ip !== "127.0.0.1" &&
-      !ip.startsWith("192.168") &&
-      !ip.startsWith("10.")
-    ) {
-      try {
-        const geoRes = await fetch(
-          `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,timezone,lat,lon`,
-          { signal: AbortSignal.timeout(3000) },
-        );
-        if (geoRes.ok) {
-          const geoData = await geoRes.json();
-          if (geoData.status === "success") {
-            geo = {
-              country: geoData.country || null,
-              country_code: geoData.countryCode || null,
-              region: geoData.regionName || null,
-              city: geoData.city || null,
-              isp: geoData.isp || null,
-              timezone: geoData.timezone || null,
-              latitude: geoData.lat || null,
-              longitude: geoData.lon || null,
-            };
-          }
-        }
-      } catch {
-        // Geo lookup failed silently — still log visit
-      }
-    }
+    // Geo lookup via Vercel Edge headers
+    const country = request.headers.get("x-vercel-ip-country") || null;
+    const region = request.headers.get("x-vercel-ip-country-region") || null;
+    const city = request.headers.get("x-vercel-ip-city") || null;
+    const latitude = request.headers.get("x-vercel-ip-latitude") || null;
+    const longitude = request.headers.get("x-vercel-ip-longitude") || null;
+    const timezone = request.headers.get("x-vercel-ip-timezone") || null;
+
+    const geo = {
+      country,
+      country_code: country,
+      region,
+      city,
+      isp: null,
+      timezone,
+      latitude,
+      longitude,
+    };
 
     if (isFirebaseConfigured && db) {
       await db.collection("visits").add({
